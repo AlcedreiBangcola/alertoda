@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Home from './screens/Home.jsx'
 import Report from './screens/Report.jsx'
 import MapScreen from './screens/MapScreen.jsx'
+import Community from './screens/Community.jsx'
 import Dispatch from './screens/Dispatch.jsx'
 import BottomNav from './components/BottomNav.jsx'
 import { mockReports } from './data/mockReports.js'
@@ -22,6 +23,7 @@ export default function App() {
         {active === 'home' && <Home onWelfareCheck={() => setActive('report')} />}
         {active === 'report' && <Report onSubmit={addReport} />}
         {active === 'map' && <MapScreen reports={reports} />}
+        {active === 'community' && <Community reports={reports} />}
         {active === 'dispatch' && <Dispatch reports={reports} />}
       </main>
       <BottomNav active={active} onChange={setActive} />

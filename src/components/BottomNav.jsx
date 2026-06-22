@@ -4,6 +4,7 @@ const ITEMS = [
   { key: 'home', label: 'Home', icon: HomeIcon },
   { key: 'report', label: 'Report', icon: ReportIcon },
   { key: 'map', label: 'Map', icon: MapIcon },
+  { key: 'community', label: 'Community', icon: CommunityIcon },
   { key: 'dispatch', label: 'Dispatch', icon: DispatchIcon },
 ]
 
@@ -54,6 +55,18 @@ function MapIcon() {
       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z" />
       <path d="M9 4v14M15 6v14" />
+    </svg>
+  )
+}
+
+function CommunityIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="8" r="3" />
+      <path d="M3.5 19a5.5 5.5 0 0 1 11 0" />
+      <path d="M16 6.5a3 3 0 0 1 0 5.8" />
+      <path d="M17.5 14.5a5.5 5.5 0 0 1 3 4.5" />
     </svg>
   )
 }
