@@ -25,8 +25,9 @@ export function useShakeDetection(onDetected) {
 
     const now = Date.now()
     const last = prev.current
+    if (last && now - last.t < SAMPLE_GAP_MS) return
     prev.current = { x: acc.x, y: acc.y, z: acc.z, t: now }
-    if (!last || now - last.t < SAMPLE_GAP_MS) return
+    if (!last) return
 
     const dx = acc.x - last.x
     const dy = acc.y - last.y
@@ -52,7 +53,9 @@ export function useShakeDetection(onDetected) {
       return 'unsupported'
     }
 
-    // iOS 13+ requires an explicit, user-gesture-triggered permission request.
+    // iOS 13+ (and iPadOS) require an explicit, user-gesture-triggered
+    // permission request. requestPermission() must be reached synchronously
+    // from the click — so there must be no awaited work before this call.
     if (typeof DME.requestPermission === 'function') {
       try {
         const res = await DME.requestPermission()
