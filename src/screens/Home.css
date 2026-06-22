@@ -214,3 +214,41 @@
   transform: scale(0.98);
   filter: brightness(0.97);
 }
+
+/* TEMPORARY debug panel — remove with the DebugPanel component. */
+.debug-panel {
+  border: 1px dashed var(--line, #d8dee6);
+}
+
+.debug-title {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+}
+
+.debug-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.debug-grid > span:nth-child(even) {
+  text-align: right;
+}
+
+.debug-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--ink, #1c2530);
+  font-weight: 600;
+}
+
+.debug-note {
+  margin: 10px 0 0;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}

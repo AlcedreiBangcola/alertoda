@@ -6,7 +6,7 @@ export default function Home({ onWelfareCheck }) {
   const [alerted, setAlerted] = useState(false)
 
   const triggerAlert = useCallback(() => setAlerted(true), [])
-  const { status, enable } = useShakeDetection(triggerAlert)
+  const { status, permission, debug, enable } = useShakeDetection(triggerAlert)
 
   // After detection, hold on the "Earthquake Detected!" beat briefly, then hand
   // off to the welfare check so the user lands on "Are you safe?".
@@ -74,6 +74,8 @@ export default function Home({ onWelfareCheck }) {
         </button>
       </section>
 
+      <DebugPanel status={status} permission={permission} debug={debug} listening={listening} />
+
       <section className="card info-row">
         <div className="info-item">
           <span className="info-label">Detection</span>
@@ -93,6 +95,32 @@ export default function Home({ onWelfareCheck }) {
         AlerToda is supplementary to PHIVOLCS, the official authority.
       </p>
     </div>
+  )
+}
+
+// TEMPORARY: live sensor readout to diagnose why shake detection isn't firing.
+// Remove once tuning is done.
+function DebugPanel({ status, permission, debug, listening }) {
+  const fmt = (v) => (v == null ? '—' : v.toFixed(2))
+  return (
+    <section className="card debug-panel">
+      <h3 className="debug-title">Debug · sensor (temporary)</h3>
+      <div className="debug-grid">
+        <span>Motion permission</span>
+        <span className="debug-mono">{permission}</span>
+        <span>Detection status</span>
+        <span className="debug-mono">{status}</span>
+        <span>x / y / z (m/s²)</span>
+        <span className="debug-mono">{fmt(debug.x)} / {fmt(debug.y)} / {fmt(debug.z)}</span>
+        <span>Shake magnitude (Δ)</span>
+        <span className="debug-mono">{fmt(debug.change)}</span>
+        <span>Recent jolts</span>
+        <span className="debug-mono">{debug.jolts} / 4</span>
+      </div>
+      {!listening && (
+        <p className="debug-note">Enable Detection to see live values.</p>
+      )}
+    </section>
   )
 }
 
