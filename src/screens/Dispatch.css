@@ -1,0 +1,268 @@
+/* AI accent — a calm indigo, deliberately distinct from safe/help/brand so the
+   "AI suggested" voice never reads as a status color. */
+.dispatch-note,
+.case-decision {
+  --ai: #5b61c4;
+  --ai-soft: #eef0fb;
+}
+
+/* ---- Summary strip ---- */
+.dispatch-summary {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.summary-stat {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 10px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.summary-num {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.summary-num--pending { color: var(--help); }
+.summary-num--done { color: var(--safe); }
+
+.summary-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+/* ---- Helper note ---- */
+.dispatch-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 2px 16px;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+.ai-spark {
+  color: var(--ai, #5b61c4);
+  font-size: 0.9em;
+}
+
+/* ---- Case list ---- */
+.case-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.case-card {
+  position: relative;
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* Left urgency rail, color keyed to the AI level. */
+.case-rail {
+  width: 6px;
+  flex: none;
+}
+
+.prio-critical .case-rail { background: var(--help); }
+.prio-high .case-rail { background: #e8943c; }
+.prio-moderate .case-rail { background: var(--brand); }
+.prio-low .case-rail { background: var(--ink-soft); }
+
+.case-body {
+  flex: 1;
+  padding: 14px 16px;
+  min-width: 0;
+}
+
+.case-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.case-identity {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.case-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.case-status {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--help);
+}
+
+/* Confirmation status badge (top-right) */
+.awaiting-badge {
+  flex: none;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 4px 9px;
+  border-radius: 999px;
+}
+
+.confirm-badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #1f6b48;
+  background: var(--safe-soft);
+  border: 1px solid #bfe4d1;
+  padding: 4px 9px;
+  border-radius: 999px;
+}
+
+/* ---- Tags ---- */
+.case-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 12px;
+}
+
+.case-tag {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.case-tag--critical {
+  color: #a8442f;
+  background: var(--help-soft);
+  border-color: #f1c9bd;
+}
+
+.case-tag--none {
+  color: var(--ink-soft);
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* ---- AI suggestion + confirm row ---- */
+.case-decision {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+
+/* The AI block gets the indigo voice + a dashed edge: a suggestion, not a verdict. */
+.ai-suggestion {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  background: var(--ai-soft);
+  border: 1px dashed #c5c9ee;
+  border-radius: 12px;
+  padding: 6px 10px;
+  min-width: 0;
+}
+
+.ai-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--ai);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.prio-pill {
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 999px;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.prio-pill--critical { background: var(--help); }
+.prio-pill--high { background: #e8943c; }
+.prio-pill--moderate { background: var(--brand); }
+.prio-pill--low { background: var(--ink-soft); }
+
+/* The confirm action is the human decision: solid, deliberate, brand-colored. */
+.confirm-btn {
+  flex: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: var(--brand);
+  color: #fff;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+.confirm-btn:active {
+  transform: scale(0.97);
+  filter: brightness(0.97);
+}
+
+.confirm-btn--done {
+  background: var(--safe-soft);
+  color: #1f6b48;
+  border: 1.5px solid #bfe4d1;
+}
+
+/* Once confirmed, the whole card settles: the AI suggestion recedes since a
+   human has taken ownership of the case. */
+.is-confirmed {
+  background: #fbfdfc;
+}
+
+.is-confirmed .ai-suggestion {
+  opacity: 0.62;
+}
+
+/* ---- Empty state ---- */
+.dispatch-empty {
+  text-align: center;
+  color: var(--ink-soft);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px 20px;
+  box-shadow: var(--shadow);
+  font-size: 0.95rem;
+}

@@ -1,0 +1,105 @@
+.map-canvas {
+  height: calc(100dvh - 250px);
+  min-height: 360px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.leaflet-root {
+  height: 100%;
+  width: 100%;
+}
+
+/* Strip the heavy default marker drop shadow box around our SVG pins */
+.welfare-pin {
+  background: none;
+  border: none;
+  filter: drop-shadow(0 2px 3px rgba(28, 43, 45, 0.35));
+}
+
+/* ---- Popup ---- */
+.pin-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 120px;
+}
+
+.pin-popup strong {
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.pin-popup-status {
+  align-self: flex-start;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.pin-popup-status--safe {
+  background: var(--safe-soft);
+  color: #1f6b48;
+}
+
+.pin-popup-status--help {
+  background: var(--help-soft);
+  color: #a8442f;
+}
+
+.pin-popup-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 2px;
+}
+
+.pin-popup-tag {
+  background: #f4f7f8;
+  border: 1px solid var(--border);
+  color: var(--ink);
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+/* Round the Leaflet popup to match the app's soft styling */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+}
+
+.leaflet-popup-content {
+  margin: 12px 14px;
+}
+
+/* ---- Legend ---- */
+.map-legend {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.legend-dot--safe { background: var(--safe); }
+.legend-dot--help { background: var(--help); }
