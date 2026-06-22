@@ -1,14 +1,67 @@
 import { useState } from 'react'
 import { QC_CENTER } from '../data/mockReports.js'
+import { supabase } from '../lib/supabaseClient.js'
 import './Report.css'
 
 const HELP_TAGS = ['Trapped', 'Injured', 'Need Water', 'Need Food', 'Structural Damage']
 
-// Until we have real geolocation, drop the user's report near QC center with a
-// small random offset so submissions don't stack on the exact same point.
+// Placeholder identity until we add real accounts/auth.
+const PLACEHOLDER_NAME = 'Anonymous Resident'
+
+// How urgent each need is; the report's urgency is the highest level among its tags.
+const TAG_WEIGHTS = {
+  Trapped: 100,
+  Injured: 70,
+  'Structural Damage': 35,
+  'Need Water': 18,
+  'Need Food': 15,
+}
+
+// Derive an urgency label the dispatcher view can rely on. Safe reports aren't urgent.
+function urgencyFor(status, tags) {
+  if (status !== 'help') return 'none'
+  const score = tags.reduce((sum, tag) => sum + (TAG_WEIGHTS[tag] || 0), 0)
+  if (score >= 70) return 'critical'
+  if (score >= 35) return 'high'
+  if (score >= 15) return 'moderate'
+  return 'low'
+}
+
+// If geolocation isn't available, drop the report near QC center with a small
+// random offset so demo submissions don't stack on the exact same point.
 function nearCenter() {
   const jitter = () => (Math.random() - 0.5) * 0.02
   return { lat: QC_CENTER[0] + jitter(), lng: QC_CENTER[1] + jitter() }
+}
+
+// Resolve the user's current position, falling back to a default QC coordinate
+// if the browser has no geolocation, denies permission, or times out.
+function getCoords() {
+  return new Promise((resolve) => {
+    if (!navigator.geolocation) {
+      resolve(nearCenter())
+      return
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => resolve(nearCenter()),
+      { timeout: 8000, maximumAge: 60000 }
+    )
+  })
+}
+
+// Persist a welfare check to Supabase. Fire-and-forget: a failed write (e.g.
+// offline during the demo) must never block the on-screen confirmation.
+async function saveReport({ status, tags, coords }) {
+  const { error } = await supabase.from('reports').insert({
+    name: PLACEHOLDER_NAME,
+    status: status === 'help' ? 'needs_help' : 'safe',
+    latitude: coords.lat,
+    longitude: coords.lng,
+    tags,
+    urgency: urgencyFor(status, tags),
+  })
+  if (error) console.error('Failed to save report to Supabase:', error.message)
 }
 
 export default function Report({ onSubmit }) {
@@ -23,18 +76,21 @@ export default function Report({ onSubmit }) {
     )
   }
 
-  function commit(status, tags) {
+  async function commit(status, tags) {
+    const coords = await getCoords()
     const newReport = {
       id: `r${Date.now()}`,
       name: 'You',
       status,
       tags,
       at: new Date(),
-      ...nearCenter(),
+      ...coords,
     }
     setReport(newReport)
     onSubmit?.(newReport)
     setStep('confirmed')
+    // Persist to Supabase without blocking the confirmation screen.
+    saveReport({ status, tags, coords })
   }
 
   function submitSafe() {

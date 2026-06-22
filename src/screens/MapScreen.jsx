@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { QC_CENTER } from '../data/mockReports.js'
+import { useReports } from '../hooks/useReports.js'
 import './MapScreen.css'
 
 const PIN_COLORS = {
@@ -27,7 +28,9 @@ function pinIcon(status) {
   })
 }
 
-export default function MapScreen({ reports = [] }) {
+export default function MapScreen() {
+  const { reports, loading } = useReports()
+
   // Memoize icons so we reuse two instances instead of rebuilding per marker.
   const icons = useMemo(
     () => ({ safe: pinIcon('safe'), help: pinIcon('help') }),
@@ -63,12 +66,16 @@ export default function MapScreen({ reports = [] }) {
                     {r.status === 'help' ? 'Needs help' : 'Safe'}
                   </span>
                   <strong>{r.name}</strong>
-                  {r.tags.length > 0 && (
+                  {r.tags.length > 0 ? (
                     <div className="pin-popup-tags">
                       {r.tags.map((tag) => (
                         <span key={tag} className="pin-popup-tag">{tag}</span>
                       ))}
                     </div>
+                  ) : (
+                    r.status === 'help' && (
+                      <span className="pin-popup-note">No details provided</span>
+                    )
                   )}
                 </div>
               </Popup>
@@ -77,14 +84,18 @@ export default function MapScreen({ reports = [] }) {
         </MapContainer>
       </div>
 
-      <div className="map-legend">
-        <span className="legend-item">
-          <span className="legend-dot legend-dot--safe" /> Safe · {safeCount}
-        </span>
-        <span className="legend-item">
-          <span className="legend-dot legend-dot--help" /> Needs help · {helpCount}
-        </span>
-      </div>
+      {!loading && reports.length === 0 ? (
+        <p className="map-empty-note">No reports yet. The map will fill in as people check in.</p>
+      ) : (
+        <div className="map-legend">
+          <span className="legend-item">
+            <span className="legend-dot legend-dot--safe" /> Safe · {safeCount}
+          </span>
+          <span className="legend-item">
+            <span className="legend-dot legend-dot--help" /> Needs help · {helpCount}
+          </span>
+        </div>
+      )}
     </div>
   )
 }

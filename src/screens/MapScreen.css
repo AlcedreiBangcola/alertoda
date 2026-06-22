@@ -52,6 +52,12 @@
   color: #a8442f;
 }
 
+.pin-popup-note {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
 .pin-popup-tags {
   display: flex;
   flex-wrap: wrap;
@@ -103,3 +109,10 @@
 
 .legend-dot--safe { background: var(--safe); }
 .legend-dot--help { background: var(--help); }
+
+.map-empty-note {
+  text-align: center;
+  margin-top: 16px;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}

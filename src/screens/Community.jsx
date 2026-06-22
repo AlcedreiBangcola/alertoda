@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { QC_CENTER } from '../data/mockReports.js'
+import { useReports } from '../hooks/useReports.js'
 import './Community.css'
 
 // The neighbor viewing this screen — for the demo we treat them as standing at
@@ -51,7 +52,9 @@ function needsSummary(tags) {
   return tags.join(', ').toLowerCase()
 }
 
-export default function Community({ reports = [] }) {
+export default function Community() {
+  const { reports, loading } = useReports()
+
   // Only people asking for help, nearest first — that's who a neighbor can reach soonest.
   const requests = useMemo(() => {
     return reports
@@ -108,10 +111,10 @@ export default function Community({ reports = [] }) {
         </MapContainer>
       </div>
 
-      {requests.length === 0 ? (
+      {loading ? null : requests.length === 0 ? (
         <div className="community-empty">
           <span aria-hidden="true">🤝</span>
-          <p>No one nearby needs help right now. Your neighborhood is okay.</p>
+          <p>No reports yet. No one nearby needs help right now.</p>
         </div>
       ) : (
         <>

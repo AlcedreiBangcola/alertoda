@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useReports } from '../hooks/useReports.js'
 import './Dispatch.css'
 
 // AI priority model: each need carries a weight; the case score is their sum.
@@ -34,7 +35,9 @@ function timeAgo(at) {
   return `${hrs} hr${hrs > 1 ? 's' : ''} ago`
 }
 
-export default function Dispatch({ reports = [] }) {
+export default function Dispatch() {
+  const { reports, loading } = useReports()
+
   // Which case IDs a human dispatcher has acknowledged. AI only suggests; this is the confirm.
   const [confirmed, setConfirmed] = useState(() => new Set())
 
@@ -84,8 +87,8 @@ export default function Dispatch({ reports = [] }) {
         AI suggests a priority. A dispatcher confirms each case.
       </p>
 
-      {cases.length === 0 ? (
-        <div className="dispatch-empty">No active help requests. All clear.</div>
+      {loading ? null : cases.length === 0 ? (
+        <div className="dispatch-empty">No reports yet. No active help requests.</div>
       ) : (
         <ul className="case-list">
           {cases.map((c) => (
