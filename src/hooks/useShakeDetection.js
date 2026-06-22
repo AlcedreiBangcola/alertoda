@@ -12,12 +12,6 @@ const SAMPLE_GAP_MS = 60 // throttle noisy sensors
 // won't cooperate (in which case the UI falls back to "Simulate Earthquake").
 export function useShakeDetection(onDetected) {
   const [status, setStatus] = useState('idle')
-  // Permission state, tracked separately from detection status so the debug
-  // panel can show exactly what the OS told us: granted / denied / unsupported,
-  // or 'n/a' on platforms that don't gate motion behind a prompt.
-  const [permission, setPermission] = useState('unknown')
-  // Live sensor readout for the temporary debug display.
-  const [debug, setDebug] = useState({ x: null, y: null, z: null, change: 0, jolts: 0 })
 
   const prev = useRef(null)
   const joltTimes = useRef([])
@@ -33,37 +27,29 @@ export function useShakeDetection(onDetected) {
     const last = prev.current
     if (last && now - last.t < SAMPLE_GAP_MS) return
     prev.current = { x: acc.x, y: acc.y, z: acc.z, t: now }
+    if (!last) return
 
+    const dx = acc.x - last.x
+    const dy = acc.y - last.y
+    const dz = acc.z - last.z
     // Gravity is roughly constant while still, so the delta isolates real motion.
-    let change = 0
-    if (last) {
-      const dx = acc.x - last.x
-      const dy = acc.y - last.y
-      const dz = acc.z - last.z
-      change = Math.sqrt(dx * dx + dy * dy + dz * dz)
+    const change = Math.sqrt(dx * dx + dy * dy + dz * dz)
+    if (change < JOLT_THRESHOLD) return
+
+    const recent = joltTimes.current.filter((t) => now - t < WINDOW_MS)
+    recent.push(now)
+    joltTimes.current = recent
+
+    if (recent.length >= REQUIRED_JOLTS && !fired.current) {
+      fired.current = true
+      onDetectedRef.current?.()
     }
-
-    if (change >= JOLT_THRESHOLD) {
-      const recent = joltTimes.current.filter((t) => now - t < WINDOW_MS)
-      recent.push(now)
-      joltTimes.current = recent
-
-      if (recent.length >= REQUIRED_JOLTS && !fired.current) {
-        fired.current = true
-        onDetectedRef.current?.()
-      }
-    } else {
-      joltTimes.current = joltTimes.current.filter((t) => now - t < WINDOW_MS)
-    }
-
-    setDebug({ x: acc.x, y: acc.y, z: acc.z, change, jolts: joltTimes.current.length })
   }, [])
 
   const enable = useCallback(async () => {
     const DME = window.DeviceMotionEvent
     if (!DME) {
       setStatus('unsupported')
-      setPermission('unsupported')
       return 'unsupported'
     }
 
@@ -75,18 +61,12 @@ export function useShakeDetection(onDetected) {
         const res = await DME.requestPermission()
         if (res !== 'granted') {
           setStatus('denied')
-          setPermission('denied')
           return 'denied'
         }
-        setPermission('granted')
       } catch {
         setStatus('denied')
-        setPermission('denied')
         return 'denied'
       }
-    } else {
-      // No prompt on this platform (e.g. Android Chrome, desktop).
-      setPermission('n/a')
     }
 
     prev.current = null
@@ -102,5 +82,5 @@ export function useShakeDetection(onDetected) {
     return () => window.removeEventListener('devicemotion', handleMotion)
   }, [handleMotion])
 
-  return { status, permission, debug, enable }
+  return { status, enable }
 }
