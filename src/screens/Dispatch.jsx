@@ -17,7 +17,7 @@ function timeAgo(at) {
   return `${hrs} hr${hrs > 1 ? 's' : ''} ago`
 }
 
-export default function Dispatch({ confirmedIds, confirmRoute }) {
+export default function Dispatch({ confirmedIds, confirmRoute, quake }) {
   const { reports, loading, markRescued } = useReports()
 
   // Which case IDs a human dispatcher has acknowledged. AI only suggests; this is the confirm.
@@ -95,6 +95,7 @@ export default function Dispatch({ confirmedIds, confirmRoute }) {
           route={route}
           rescued={rescued}
           confirmed={routeConfirmed}
+          quake={quake}
           onConfirm={() => confirmRoute(route.map((s) => s.id))}
           onRescued={markRescued}
         />
@@ -119,7 +120,7 @@ export default function Dispatch({ confirmedIds, confirmRoute }) {
   )
 }
 
-function RescueRoutePanel({ route, rescued, confirmed, onConfirm, onRescued }) {
+function RescueRoutePanel({ route, rescued, confirmed, quake, onConfirm, onRescued }) {
   return (
     <section className={`route-panel ${confirmed ? 'route-panel--confirmed' : ''}`}>
       <div className="route-panel-head">
@@ -150,6 +151,7 @@ function RescueRoutePanel({ route, rescued, confirmed, onConfirm, onRescued }) {
           stops={route}
           rescued={rescued}
           confirmed={confirmed}
+          quake={quake}
         />
 
         <ol className="route-stops">

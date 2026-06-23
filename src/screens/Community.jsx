@@ -4,6 +4,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { QC_CENTER } from '../data/mockReports.js'
 import { useReports } from '../hooks/useReports.js'
+import AffectedRadius, { AffectedCaption } from '../components/AffectedRadius.jsx'
 import './Community.css'
 
 // The neighbor viewing this screen — for the demo we treat them as standing at
@@ -52,7 +53,7 @@ function needsSummary(tags) {
   return tags.join(', ').toLowerCase()
 }
 
-export default function Community() {
+export default function Community({ quake }) {
   const { reports, loading } = useReports()
 
   // Only people asking for help, nearest first — that's who a neighbor can reach soonest.
@@ -89,6 +90,7 @@ export default function Community() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+          <AffectedRadius quake={quake} fit />
           {requests.map((r) => (
             <Marker key={r.id} position={[r.lat, r.lng]} icon={helpPin}>
               <Popup>
@@ -110,6 +112,8 @@ export default function Community() {
           ))}
         </MapContainer>
       </div>
+
+      <AffectedCaption quake={quake} />
 
       {loading ? null : requests.length === 0 ? (
         <div className="community-empty">

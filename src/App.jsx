@@ -20,7 +20,7 @@ export default function App() {
   // broadcast() fires here and on every other open app. The full-screen alert
   // runs in two beats — "Earthquake Detected!", then a cross-check confirmation
   // step — before routing everyone to the welfare check.
-  const { alert, broadcast, clearAlert } = useEarthquakeAlert()
+  const { alert, quake, broadcast, clearAlert } = useEarthquakeAlert()
 
   // The dispatcher's confirmed rescue route, shared live across devices. Held at
   // the app root (not inside a screen) so it survives tab switches and keeps the
@@ -50,7 +50,7 @@ export default function App() {
   // The alert takes over the whole screen no matter which tab the user is on.
   if (alert) {
     if (alertPhase === 'confirming') {
-      return <DetectionConfirm onDone={goToCheckIn} />
+      return <DetectionConfirm onDone={goToCheckIn} quake={quake} />
     }
     return <EarthquakeAlert onCheckIn={goToCheckIn} />
   }
@@ -62,13 +62,13 @@ export default function App() {
       <AppBar />
       <main className="app-content">
         {active === 'home' && <Home onQuake={broadcast} />}
-        {active === 'report' && <Report />}
-        {active === 'map' && <MapScreen />}
-        {active === 'community' && <Community />}
+        {active === 'report' && <Report quake={quake} />}
+        {active === 'map' && <MapScreen quake={quake} />}
+        {active === 'community' && <Community quake={quake} />}
         {active === 'dispatch' && (
-          <Dispatch confirmedIds={confirmedIds} confirmRoute={confirmRoute} />
+          <Dispatch confirmedIds={confirmedIds} confirmRoute={confirmRoute} quake={quake} />
         )}
-        {active === 'rescuer' && <Rescuer confirmedIds={confirmedIds} />}
+        {active === 'rescuer' && <Rescuer confirmedIds={confirmedIds} quake={quake} />}
       </main>
       <BottomNav active={active} onChange={setActive} />
     </div>

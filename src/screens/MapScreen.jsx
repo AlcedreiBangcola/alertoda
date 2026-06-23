@@ -4,6 +4,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { QC_CENTER } from '../data/mockReports.js'
 import { useReports } from '../hooks/useReports.js'
+import AffectedRadius, { AffectedCaption } from '../components/AffectedRadius.jsx'
 import './MapScreen.css'
 
 const PIN_COLORS = {
@@ -34,7 +35,7 @@ function pinIcon(status) {
   })
 }
 
-export default function MapScreen() {
+export default function MapScreen({ quake }) {
   const { reports, loading } = useReports()
 
   // Memoize icons so we reuse three instances instead of rebuilding per marker.
@@ -65,6 +66,7 @@ export default function MapScreen() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+          <AffectedRadius quake={quake} fit />
           {reports.map((r) => (
             <Marker key={r.id} position={[r.lat, r.lng]} icon={icons[r.status]}>
               <Popup>
@@ -90,6 +92,8 @@ export default function MapScreen() {
           ))}
         </MapContainer>
       </div>
+
+      <AffectedCaption quake={quake} />
 
       {!loading && reports.length === 0 ? (
         <p className="map-empty-note">No reports yet. The map will fill in as people check in.</p>

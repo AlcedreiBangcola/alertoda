@@ -178,6 +178,79 @@
   color: rgba(255, 255, 255, 0.92);
 }
 
+/* ---- Estimated magnitude readout (after cross-check) ---- */
+.quake-estimate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 20px;
+  padding: 16px 22px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  animation: quake-estimate-in 0.5s ease both;
+}
+
+@keyframes quake-estimate-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.quake-estimate-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.quake-estimate-figures {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.quake-estimate-mag {
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--band, #fff);
+}
+
+.quake-estimate-intensity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+  padding-left: 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.quake-estimate-intensity small {
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.quake-estimate-radius {
+  margin-top: 2px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.quake-estimate-disclaimer {
+  margin-top: 4px;
+  max-width: 320px;
+  text-align: center;
+  font-size: 0.7rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.55);
+}
+
 /* ---- Honesty disclaimer ---- */
 .confirm-detect-note {
   margin: 26px 0 0;

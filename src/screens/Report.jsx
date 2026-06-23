@@ -1,8 +1,31 @@
 import { useState } from 'react'
 import { QC_CENTER } from '../data/mockReports.js'
 import { HELP_TAGS, VULNERABILITY_TAGS, suggestPriority } from '../lib/priority.js'
+import { magnitudeBand, QUAKE_DISCLAIMER } from '../lib/quake.js'
 import { supabase } from '../lib/supabaseClient.js'
 import './Report.css'
+
+// Calm banner framing the welfare check as reaching everyone inside the estimated
+// affected area. Honest about being an illustrative estimate, not a PHIVOLCS reading.
+function QuakeBanner({ quake }) {
+  if (!quake) return null
+  const band = magnitudeBand(quake.magnitude)
+  return (
+    <div className="quake-banner" style={{ '--band': band.color }}>
+      <div className="quake-banner-head">
+        <span className="quake-banner-mag">M{quake.magnitude.toFixed(1)}</span>
+        <div className="quake-banner-text">
+          <strong>Earthquake confirmed near you</strong>
+          <span>
+            Est. Intensity {quake.intensity.roman} ({quake.intensity.label}) · you're within the
+            estimated affected area (~{quake.radiusKm} km)
+          </span>
+        </div>
+      </div>
+      <p className="quake-banner-note">{QUAKE_DISCLAIMER}</p>
+    </div>
+  )
+}
 
 // Placeholder identity until we add real accounts/auth.
 const PLACEHOLDER_NAME = 'Anonymous Resident'
@@ -51,7 +74,7 @@ async function saveReport({ status, tags, coords }) {
   if (error) console.error('Failed to save report to Supabase:', error.message)
 }
 
-export default function Report({ onSubmit }) {
+export default function Report({ onSubmit, quake }) {
   // 'choose' → pick safe/help · 'help-detail' → select tags · 'confirmed' → result
   const [step, setStep] = useState('choose')
   const [selectedTags, setSelectedTags] = useState([])
@@ -168,6 +191,8 @@ export default function Report({ onSubmit }) {
   // step === 'choose'
   return (
     <div>
+      <QuakeBanner quake={quake} />
+
       <header className="screen-header">
         <h1>Are you safe?</h1>
         <p>Let your community and dispatchers know your status.</p>

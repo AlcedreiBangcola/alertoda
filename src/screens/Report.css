@@ -1,3 +1,58 @@
+/* ---- Confirmed-quake banner above the welfare check ---- */
+.quake-banner {
+  margin-bottom: 18px;
+  padding: 16px 18px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--band, var(--brand));
+  box-shadow: var(--shadow);
+}
+
+.quake-banner-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.quake-banner-mag {
+  flex: none;
+  display: grid;
+  place-items: center;
+  min-width: 52px;
+  height: 52px;
+  padding: 0 10px;
+  border-radius: 14px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+  background: var(--band, var(--brand));
+}
+
+.quake-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.quake-banner-text strong {
+  font-size: 0.98rem;
+  color: var(--ink);
+}
+
+.quake-banner-text span {
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+
+.quake-banner-note {
+  margin: 12px 0 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
 .welfare-buttons {
   display: flex;
   flex-direction: column;

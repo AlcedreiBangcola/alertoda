@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { MapContainer, TileLayer, Marker, Polyline, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import AffectedRadius from './AffectedRadius.jsx'
 import './RescueRouteMap.css'
 
 // Start point: a flag-style marker so the responder's origin reads differently
@@ -46,7 +47,7 @@ function FitToRoute({ points }) {
   return null
 }
 
-export default function RescueRouteMap({ origin, stops, rescued = [], confirmed }) {
+export default function RescueRouteMap({ origin, stops, rescued = [], confirmed, quake }) {
   // origin → stop 1 → stop 2 → … as a connected line (active stops only).
   const line = useMemo(
     () => [origin, ...stops.map((s) => [s.lat, s.lng])],
@@ -72,6 +73,8 @@ export default function RescueRouteMap({ origin, stops, rescued = [], confirmed 
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        <AffectedRadius quake={quake} />
 
         <Polyline
           positions={line}

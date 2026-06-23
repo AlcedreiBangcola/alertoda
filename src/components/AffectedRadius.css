@@ -1,0 +1,60 @@
+/* ---- Estimated epicenter marker + popup ---- */
+.epicenter-pin {
+  display: grid;
+  place-items: center;
+}
+
+.epicenter-dot {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #142031;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 4px rgba(20, 32, 49, 0.18);
+}
+
+.epicenter-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 168px;
+}
+
+.epicenter-popup strong {
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+.epicenter-popup span {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.epicenter-popup small {
+  margin-top: 4px;
+  font-size: 0.68rem;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+
+/* Caption shown beneath any map carrying the affected-radius circle. */
+.affected-caption {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 10px 0 0;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.affected-caption .affected-swatch {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin-top: 2px;
+  border-radius: 4px;
+  border: 1.5px dashed currentColor;
+  opacity: 0.8;
+}

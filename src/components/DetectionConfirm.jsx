@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { magnitudeBand, QUAKE_DISCLAIMER } from '../lib/quake.js'
 import './DetectionConfirm.css'
 
 // Illustrative figures only — NOT live sensor data. This screen demonstrates the
@@ -28,7 +29,7 @@ function PhoneGlyph() {
 
 // Full-screen cross-check beat shown between "Earthquake Detected" and the
 // welfare check. Runs a short scripted sequence (~2.5s), then calls onDone().
-export default function DetectionConfirm({ onDone }) {
+export default function DetectionConfirm({ onDone, quake }) {
   const [confirmed, setConfirmed] = useState(0) // how many devices have reported in
   const [phase, setPhase] = useState('checking') // 'checking' | 'tally' | 'confirmed'
 
@@ -98,6 +99,23 @@ export default function DetectionConfirm({ onDone }) {
       </div>
 
       <p className="confirm-detect-status">{status}</p>
+
+      {done && quake && (
+        <div className="quake-estimate" style={{ '--band': magnitudeBand(quake.magnitude).onDark }}>
+          <span className="quake-estimate-eyebrow">Estimated magnitude</span>
+          <div className="quake-estimate-figures">
+            <span className="quake-estimate-mag">{quake.magnitude.toFixed(1)}</span>
+            <span className="quake-estimate-intensity">
+              Intensity {quake.intensity.roman}
+              <small>{quake.intensity.label}</small>
+            </span>
+          </div>
+          <span className="quake-estimate-radius">
+            Affected radius ~{quake.radiusKm} km · everyone inside is alerted
+          </span>
+          <span className="quake-estimate-disclaimer">{QUAKE_DISCLAIMER}</span>
+        </div>
+      )}
 
       <p className="confirm-detect-note">
         <strong>Demonstration:</strong> in a full deployment, AlerToda confirms quakes by

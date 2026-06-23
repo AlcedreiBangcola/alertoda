@@ -10,7 +10,7 @@ import './Rescuer.css'
 // Field responder's view, on their own phone. It mirrors the dispatcher's data
 // (same Supabase realtime reports) but shows only what a human dispatcher has
 // CONFIRMED — AI recommends, a human confirms, then the rescuer rolls out.
-export default function Rescuer({ confirmedIds }) {
+export default function Rescuer({ confirmedIds, quake }) {
   const { reports, loading, markRescued } = useReports()
 
   // Same scoring + routing as the dispatcher, so both compute an identical plan.
@@ -69,6 +69,7 @@ export default function Rescuer({ confirmedIds }) {
               stops={assignedRoute}
               rescued={rescuedConfirmed}
               confirmed
+              quake={quake}
             />
 
             {allDone ? (
