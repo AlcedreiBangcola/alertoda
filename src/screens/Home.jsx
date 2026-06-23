@@ -1,24 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
 import { useShakeDetection } from '../hooks/useShakeDetection.js'
 import './Home.css'
 
-export default function Home({ onWelfareCheck }) {
-  const [alerted, setAlerted] = useState(false)
-
-  const triggerAlert = useCallback(() => setAlerted(true), [])
-  const { status, enable } = useShakeDetection(triggerAlert)
-
-  // After detection, hold on the "Earthquake Detected!" beat briefly, then hand
-  // off to the welfare check so the user lands on "Are you safe?".
-  useEffect(() => {
-    if (!alerted) return
-    const t = setTimeout(() => onWelfareCheck?.(), 2200)
-    return () => clearTimeout(t)
-  }, [alerted, onWelfareCheck])
-
-  if (alerted) {
-    return <EarthquakeAlert onCheckIn={() => onWelfareCheck?.()} />
-  }
+export default function Home({ onQuake }) {
+  // Local shake detection is the trigger; it broadcasts a community-wide alert
+  // (handled in App) so every open app reacts, not just this phone.
+  const { status, enable } = useShakeDetection(onQuake)
 
   const listening = status === 'listening'
 
@@ -69,7 +55,7 @@ export default function Home({ onWelfareCheck }) {
           </>
         )}
 
-        <button className="simulate-btn" onClick={triggerAlert}>
+        <button className="simulate-btn" onClick={onQuake}>
           Simulate Earthquake
         </button>
       </section>
@@ -92,21 +78,6 @@ export default function Home({ onWelfareCheck }) {
       <p className="placeholder-note">
         AlerToda is supplementary to PHIVOLCS, the official authority.
       </p>
-    </div>
-  )
-}
-
-function EarthquakeAlert({ onCheckIn }) {
-  return (
-    <div className="quake-alert">
-      <div className="quake-ring" aria-hidden="true">
-        <span className="quake-glyph">!</span>
-      </div>
-      <h1 className="quake-title">Earthquake Detected!</h1>
-      <p className="quake-sub">Strong shaking detected. Taking you to a quick safety check…</p>
-      <button className="quake-btn" onClick={onCheckIn}>
-        Check in now
-      </button>
     </div>
   )
 }
