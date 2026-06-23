@@ -49,7 +49,12 @@
 
 .pin-popup-status--help {
   background: var(--help-soft);
-  color: #a8442f;
+  color: var(--help-ink);
+}
+
+.pin-popup-status--rescued {
+  background: #eef1f4;
+  color: #5d7173;
 }
 
 .pin-popup-note {
@@ -87,7 +92,8 @@
 /* ---- Legend ---- */
 .map-legend {
   display: flex;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 10px 18px;
   justify-content: center;
   margin-top: 16px;
 }
@@ -109,6 +115,7 @@
 
 .legend-dot--safe { background: var(--safe); }
 .legend-dot--help { background: var(--help); }
+.legend-dot--rescued { background: #9aa7b6; }
 
 .map-empty-note {
   text-align: center;

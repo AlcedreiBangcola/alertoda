@@ -9,18 +9,24 @@ import './MapScreen.css'
 const PIN_COLORS = {
   safe: '#2e9e6b',
   help: '#d9694f',
+  rescued: '#9aa7b6', // muted slate — a settled, closed case
 }
 
 // Exact SVG teardrop so the icon anchor lands precisely on the map point.
+// Rescued pins carry a check instead of the plain dot to read as "reached".
 function pinIcon(status) {
   const color = PIN_COLORS[status] || '#5d7173'
+  const center =
+    status === 'rescued'
+      ? `<path d="M9.4 11.2 11.2 13l3.4-3.6" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`
+      : `<circle cx="12" cy="11" r="3.6" fill="#ffffff"/>`
   return L.divIcon({
     className: 'welfare-pin',
     html: `
       <svg width="26" height="34" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 1C6.5 1 2 5.5 2 11c0 7.5 10 20 10 20s10-12.5 10-20C22 5.5 17.5 1 12 1z"
           fill="${color}" stroke="#ffffff" stroke-width="2"/>
-        <circle cx="12" cy="11" r="3.6" fill="#ffffff"/>
+        ${center}
       </svg>`,
     iconSize: [26, 34],
     iconAnchor: [13, 33],
@@ -31,14 +37,15 @@ function pinIcon(status) {
 export default function MapScreen() {
   const { reports, loading } = useReports()
 
-  // Memoize icons so we reuse two instances instead of rebuilding per marker.
+  // Memoize icons so we reuse three instances instead of rebuilding per marker.
   const icons = useMemo(
-    () => ({ safe: pinIcon('safe'), help: pinIcon('help') }),
+    () => ({ safe: pinIcon('safe'), help: pinIcon('help'), rescued: pinIcon('rescued') }),
     []
   )
 
   const helpCount = reports.filter((r) => r.status === 'help').length
-  const safeCount = reports.length - helpCount
+  const rescuedCount = reports.filter((r) => r.status === 'rescued').length
+  const safeCount = reports.filter((r) => r.status === 'safe').length
 
   return (
     <div>
@@ -63,7 +70,7 @@ export default function MapScreen() {
               <Popup>
                 <div className="pin-popup">
                   <span className={`pin-popup-status pin-popup-status--${r.status}`}>
-                    {r.status === 'help' ? 'Needs help' : 'Safe'}
+                    {r.status === 'help' ? 'Needs help' : r.status === 'rescued' ? 'Rescued' : 'Safe'}
                   </span>
                   <strong>{r.name}</strong>
                   {r.tags.length > 0 ? (
@@ -94,6 +101,11 @@ export default function MapScreen() {
           <span className="legend-item">
             <span className="legend-dot legend-dot--help" /> Needs help · {helpCount}
           </span>
+          {rescuedCount > 0 && (
+            <span className="legend-item">
+              <span className="legend-dot legend-dot--rescued" /> Rescued · {rescuedCount}
+            </span>
+          )}
         </div>
       )}
     </div>

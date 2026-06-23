@@ -16,7 +16,7 @@ function timeAgo(at) {
 }
 
 export default function Dispatch() {
-  const { reports, loading } = useReports()
+  const { reports, loading, markRescued } = useReports()
 
   // Which case IDs a human dispatcher has acknowledged. AI only suggests; this is the confirm.
   const [confirmed, setConfirmed] = useState(() => new Set())
@@ -33,13 +33,21 @@ export default function Dispatch() {
   }
 
   // Only people who asked for help, each scored, sorted most-urgent first.
-  // Ties break toward the most recent report.
+  // Ties break toward the most recent report. Rescued people drop out here, so
+  // the route below recalculates around whoever is left.
   const cases = useMemo(() => {
     return reports
       .filter((r) => r.status === 'help')
       .map((r) => ({ ...r, ai: suggestPriority(r.tags) }))
       .sort((a, b) => b.ai.score - a.ai.score || new Date(b.at || 0) - new Date(a.at || 0))
   }, [reports])
+
+  // Closed cases — shown as muted, checkmarked pins so the dispatcher keeps
+  // sight of who's already been reached.
+  const rescued = useMemo(
+    () => reports.filter((r) => r.status === 'rescued'),
+    [reports]
+  )
 
   // AI rescue route: nearest-neighbor from the dispatch origin, weighted by urgency.
   const route = useMemo(() => buildRescueRoute(cases, DISPATCH_ORIGIN), [cases])
@@ -77,6 +85,10 @@ export default function Dispatch() {
           <span className="summary-num summary-num--done">{cases.length - pending}</span>
           <span className="summary-label">Confirmed</span>
         </div>
+        <div className="summary-stat">
+          <span className="summary-num summary-num--rescued">{rescued.length}</span>
+          <span className="summary-label">Rescued</span>
+        </div>
       </div>
 
       <p className="dispatch-note">
@@ -87,8 +99,10 @@ export default function Dispatch() {
       {route.length > 0 && (
         <RescueRoutePanel
           route={route}
+          rescued={rescued}
           confirmed={routeConfirmed}
           onConfirm={() => setRouteConfirmed(true)}
+          onRescued={markRescued}
         />
       )}
 
@@ -102,6 +116,7 @@ export default function Dispatch() {
               report={c}
               confirmed={confirmed.has(c.id)}
               onToggleConfirm={() => toggleConfirm(c.id)}
+              onRescued={() => markRescued(c.id)}
             />
           ))}
         </ul>
@@ -110,7 +125,7 @@ export default function Dispatch() {
   )
 }
 
-function RescueRoutePanel({ route, confirmed, onConfirm }) {
+function RescueRoutePanel({ route, rescued, confirmed, onConfirm, onRescued }) {
   return (
     <section className={`route-panel ${confirmed ? 'route-panel--confirmed' : ''}`}>
       <div className="route-panel-head">
@@ -139,6 +154,7 @@ function RescueRoutePanel({ route, confirmed, onConfirm }) {
         <RescueRouteMap
           origin={DISPATCH_ORIGIN}
           stops={route}
+          rescued={rescued}
           confirmed={confirmed}
         />
 
@@ -159,9 +175,17 @@ function RescueRoutePanel({ route, confirmed, onConfirm }) {
                 </div>
                 <span className="route-stop-reason">{stop.ai.reason}</span>
                 <CaseTags tags={stop.tags} />
-                <span className="route-stop-leg">
-                  {stop.distanceKm.toFixed(1)} km from previous
-                </span>
+                <div className="route-stop-foot">
+                  <span className="route-stop-leg">
+                    {stop.distanceKm.toFixed(1)} km from previous
+                  </span>
+                  <button
+                    className="rescued-btn rescued-btn--sm"
+                    onClick={() => onRescued(stop.id)}
+                  >
+                    ✓ Mark as Rescued
+                  </button>
+                </div>
               </div>
             </li>
           ))}
@@ -201,7 +225,7 @@ function CaseTags({ tags }) {
   )
 }
 
-function CaseCard({ report, confirmed, onToggleConfirm }) {
+function CaseCard({ report, confirmed, onToggleConfirm, onRescued }) {
   const { ai } = report
   const when = timeAgo(report.at)
 
@@ -242,6 +266,10 @@ function CaseCard({ report, confirmed, onToggleConfirm }) {
             {confirmed ? 'Confirmed ✓' : 'Confirm'}
           </button>
         </div>
+
+        <button className="rescued-btn" onClick={onRescued}>
+          ✓ Mark as Rescued
+        </button>
       </div>
     </li>
   )

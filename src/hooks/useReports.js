@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 
 // The `tags` column may come back as a real array (jsonb / text[]) or, with the
@@ -30,13 +30,21 @@ function parseTags(raw) {
   return [s]
 }
 
+// Collapse the stored DB status into the three states the screens reason about:
+// 'help' (needs_help), 'rescued' (a dispatcher closed the case), or 'safe'.
+function internalStatus(raw) {
+  if (raw === 'needs_help') return 'help'
+  if (raw === 'rescued') return 'rescued'
+  return 'safe'
+}
+
 // Map a Supabase `reports` row to the internal shape the screens already use,
 // so existing rendering/sorting logic keeps working unchanged.
 function normalize(row) {
   return {
     id: row.id,
     name: row.name || 'Resident',
-    status: row.status === 'needs_help' ? 'help' : 'safe',
+    status: internalStatus(row.status),
     tags: parseTags(row.tags),
     lat: Number(row.latitude),
     lng: Number(row.longitude),
@@ -72,9 +80,10 @@ export function useReports() {
         setLoading(false)
       })
 
-    // 2. Subscribe to new inserts so fresh reports appear live, no refresh needed.
+    // 2. Subscribe to changes so fresh reports — and status changes like a
+    //    dispatcher marking someone rescued — appear live on every open device.
     const channel = supabase
-      .channel('reports-inserts')
+      .channel('reports-changes')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'reports' },
@@ -88,6 +97,16 @@ export function useReports() {
           )
         }
       )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'reports' },
+        (payload) => {
+          if (!active) return
+          const row = normalize(payload.new)
+          // Replace in place so a status change (e.g. → rescued) reflects live.
+          setReports((prev) => prev.map((r) => (r.id === row.id ? row : r)))
+        }
+      )
       .subscribe()
 
     return () => {
@@ -96,5 +115,19 @@ export function useReports() {
     }
   }, [])
 
-  return { reports, loading }
+  // Close a case: mark a person rescued. Updates locally at once (optimistic) so
+  // the route recalculates instantly, then persists to Supabase — whose realtime
+  // UPDATE then mirrors the change to every other open device.
+  const markRescued = useCallback(async (id) => {
+    setReports((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, status: 'rescued' } : r))
+    )
+    const { error } = await supabase
+      .from('reports')
+      .update({ status: 'rescued' })
+      .eq('id', id)
+    if (error) console.error('Failed to mark report rescued in Supabase:', error.message)
+  }, [])
+
+  return { reports, loading, markRescued }
 }

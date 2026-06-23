@@ -25,6 +25,32 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
+/* Rescued (closed-case) marker — muted slate so it recedes behind active stops. */
+.route-rescued-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #9aa7b6;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.28);
+}
+
+.route-popup-rescued {
+  align-self: flex-start;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #eef1f4;
+  color: #5d7173;
+}
+
 /* Dispatch origin marker */
 .route-origin-badge {
   display: flex;

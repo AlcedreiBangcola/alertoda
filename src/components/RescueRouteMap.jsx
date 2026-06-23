@@ -26,6 +26,16 @@ function numberedIcon(n, confirmed) {
   })
 }
 
+// Muted, checkmarked marker for someone already rescued — visually settled and
+// clearly distinct from the active red/indigo route stops.
+const rescuedIcon = L.divIcon({
+  className: 'route-rescued-pin',
+  html: `<div class="route-rescued-badge" title="Rescued">✓</div>`,
+  iconSize: [26, 26],
+  iconAnchor: [13, 13],
+  popupAnchor: [0, -12],
+})
+
 // Keep every point (origin + all stops) in view as reports load/change.
 function FitToRoute({ points }) {
   const map = useMap()
@@ -36,11 +46,18 @@ function FitToRoute({ points }) {
   return null
 }
 
-export default function RescueRouteMap({ origin, stops, confirmed }) {
-  // origin → stop 1 → stop 2 → … as a connected line.
+export default function RescueRouteMap({ origin, stops, rescued = [], confirmed }) {
+  // origin → stop 1 → stop 2 → … as a connected line (active stops only).
   const line = useMemo(
     () => [origin, ...stops.map((s) => [s.lat, s.lng])],
     [origin, stops]
+  )
+
+  // Fit the view to everything on the map, including rescued markers, so they
+  // don't drift off-screen as the active route shrinks.
+  const fitPoints = useMemo(
+    () => [...line, ...rescued.map((r) => [r.lat, r.lng])],
+    [line, rescued]
   )
 
   return (
@@ -94,7 +111,20 @@ export default function RescueRouteMap({ origin, stops, confirmed }) {
           </Marker>
         ))}
 
-        <FitToRoute points={line} />
+        {rescued
+          .filter((r) => Number.isFinite(r.lat) && Number.isFinite(r.lng))
+          .map((r) => (
+            <Marker key={r.id} position={[r.lat, r.lng]} icon={rescuedIcon}>
+              <Popup>
+                <div className="route-popup">
+                  <strong>{r.name}</strong>
+                  <span className="route-popup-rescued">✓ Rescued</span>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+
+        <FitToRoute points={fitPoints} />
       </MapContainer>
     </div>
   )
