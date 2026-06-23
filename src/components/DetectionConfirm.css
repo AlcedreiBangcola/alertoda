@@ -1,0 +1,201 @@
+/* ---- Cross-check confirmation beat ----
+   Same calm navy field as the earthquake alert for visual continuity. Steady,
+   reassuring "many devices agree" motion — never flashing or chaotic. */
+.confirm-detect {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 56px 28px 40px;
+  min-height: 100dvh;
+  justify-content: center;
+  background:
+    radial-gradient(120% 80% at 50% 18%, #243f63 0%, var(--brand-strong) 60%, #0f2540 100%);
+  color: #fff;
+}
+
+.confirm-detect-brand {
+  position: absolute;
+  top: calc(22px + env(safe-area-inset-top));
+  font-size: 1rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.confirm-detect-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 10px;
+}
+
+.confirm-detect-eyebrow-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #7fd1a8;
+  box-shadow: 0 0 0 0 rgba(127, 209, 168, 0.5);
+  animation: confirm-detect-blip 1.4s ease-out infinite;
+}
+
+@keyframes confirm-detect-blip {
+  0% { box-shadow: 0 0 0 0 rgba(127, 209, 168, 0.5); }
+  70% { box-shadow: 0 0 0 9px rgba(127, 209, 168, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(127, 209, 168, 0); }
+}
+
+.confirm-detect-title {
+  margin: 0 0 26px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* ---- Device constellation ---- */
+.confirm-detect-stage {
+  position: relative;
+  width: min(78vw, 280px);
+  aspect-ratio: 1;
+  margin-bottom: 22px;
+}
+
+.confirm-detect-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.confirm-detect-line {
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 0.8;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 0.4s ease;
+}
+
+.confirm-detect-line.is-on {
+  stroke: rgba(127, 209, 168, 0.85);
+  stroke-width: 1.4;
+}
+
+/* "You" at the centre */
+.confirm-detect-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 26px;
+  height: 26px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.12), 0 0 0 0 rgba(255, 255, 255, 0.25);
+  animation: confirm-detect-pulse 1.8s ease-out infinite;
+}
+
+.confirm-detect-center.is-done {
+  background: #7fd1a8;
+  animation: none;
+  box-shadow: 0 0 0 8px rgba(127, 209, 168, 0.18);
+}
+
+@keyframes confirm-detect-pulse {
+  0% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.12), 0 0 0 0 rgba(255, 255, 255, 0.3); }
+  70% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.12), 0 0 0 22px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.12), 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+/* Nearby device nodes */
+.confirm-detect-device {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
+  font-weight: 800;
+  animation: confirm-detect-idle 1.6s ease-in-out infinite;
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+@keyframes confirm-detect-idle {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.confirm-detect-device.is-confirmed {
+  background: #2e9e6b;
+  border-color: #7fd1a8;
+  color: #fff;
+  animation: none;
+  transform: translate(-50%, -50%) scale(1.06);
+  box-shadow: 0 4px 14px rgba(46, 158, 107, 0.4);
+}
+
+/* ---- Tally + status ---- */
+.confirm-detect-tally {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.confirm-detect-tally.is-done {
+  background: rgba(46, 158, 107, 0.22);
+  border-color: rgba(127, 209, 168, 0.6);
+}
+
+.confirm-detect-count {
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.confirm-detect-of {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.confirm-detect-status {
+  margin: 14px 0 0;
+  min-height: 1.4em;
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* ---- Honesty disclaimer ---- */
+.confirm-detect-note {
+  margin: 26px 0 0;
+  max-width: 340px;
+  font-size: 0.74rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.confirm-detect-note strong {
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirm-detect-eyebrow-dot,
+  .confirm-detect-center,
+  .confirm-detect-device {
+    animation: none;
+  }
+}

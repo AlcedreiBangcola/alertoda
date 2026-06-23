@@ -11,7 +11,7 @@ export default function EarthquakeAlert({ onCheckIn }) {
         <span className="quake-glyph">!</span>
       </div>
       <h1 className="quake-title">Earthquake Detected</h1>
-      <p className="quake-sub">Strong shaking detected. Taking you to a quick safety check…</p>
+      <p className="quake-sub">Strong shaking detected. Cross-checking nearby devices…</p>
       <button className="quake-btn" onClick={onCheckIn}>
         Check in now
       </button>
