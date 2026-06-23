@@ -4,11 +4,13 @@ import Report from './screens/Report.jsx'
 import MapScreen from './screens/MapScreen.jsx'
 import Community from './screens/Community.jsx'
 import Dispatch from './screens/Dispatch.jsx'
+import Rescuer from './screens/Rescuer.jsx'
 import BottomNav from './components/BottomNav.jsx'
 import AppBar from './components/AppBar.jsx'
 import EarthquakeAlert from './components/EarthquakeAlert.jsx'
 import DetectionConfirm from './components/DetectionConfirm.jsx'
 import { useEarthquakeAlert } from './hooks/useEarthquakeAlert.js'
+import { useRouteDispatch } from './hooks/useRouteDispatch.js'
 import './App.css'
 
 export default function App() {
@@ -19,6 +21,12 @@ export default function App() {
   // runs in two beats — "Earthquake Detected!", then a cross-check confirmation
   // step — before routing everyone to the welfare check.
   const { alert, broadcast, clearAlert } = useEarthquakeAlert()
+
+  // The dispatcher's confirmed rescue route, shared live across devices. Held at
+  // the app root (not inside a screen) so it survives tab switches and keeps the
+  // Dispatcher and Rescuer views in sync. The rescuer sees an assignment only
+  // after a human dispatcher confirms it — AI recommends, human confirms.
+  const { confirmedIds, confirmRoute } = useRouteDispatch()
 
   // 'detected' = initial beat · 'confirming' = nearby-device cross-check demo.
   const [alertPhase, setAlertPhase] = useState('detected')
@@ -57,7 +65,10 @@ export default function App() {
         {active === 'report' && <Report />}
         {active === 'map' && <MapScreen />}
         {active === 'community' && <Community />}
-        {active === 'dispatch' && <Dispatch />}
+        {active === 'dispatch' && (
+          <Dispatch confirmedIds={confirmedIds} confirmRoute={confirmRoute} />
+        )}
+        {active === 'rescuer' && <Rescuer confirmedIds={confirmedIds} />}
       </main>
       <BottomNav active={active} onChange={setActive} />
     </div>

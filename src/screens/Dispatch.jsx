@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useReports } from '../hooks/useReports.js'
+import { isRouteConfirmed } from '../hooks/useRouteDispatch.js'
 import { buildRescueRoute } from '../lib/rescueRoute.js'
-import { suggestPriority, splitTags, tagWeight } from '../lib/priority.js'
+import { suggestPriority } from '../lib/priority.js'
 import { DISPATCH_ORIGIN } from '../data/mockReports.js'
 import RescueRouteMap from '../components/RescueRouteMap.jsx'
+import CaseTags from '../components/CaseTags.jsx'
 import './Dispatch.css'
 
 function timeAgo(at) {
@@ -15,14 +17,11 @@ function timeAgo(at) {
   return `${hrs} hr${hrs > 1 ? 's' : ''} ago`
 }
 
-export default function Dispatch() {
+export default function Dispatch({ confirmedIds, confirmRoute }) {
   const { reports, loading, markRescued } = useReports()
 
   // Which case IDs a human dispatcher has acknowledged. AI only suggests; this is the confirm.
   const [confirmed, setConfirmed] = useState(() => new Set())
-
-  // The rescue route is also AI-suggested until a human taps "Confirm Route".
-  const [routeConfirmed, setRouteConfirmed] = useState(false)
 
   function toggleConfirm(id) {
     setConfirmed((prev) => {
@@ -52,16 +51,11 @@ export default function Dispatch() {
   // AI rescue route: nearest-neighbor from the dispatch origin, weighted by urgency.
   const route = useMemo(() => buildRescueRoute(cases, DISPATCH_ORIGIN), [cases])
 
-  // If the route changes (a new help report arrives), it's a fresh suggestion —
-  // drop the prior confirmation so the dispatcher re-approves the updated plan.
-  const routeKey = route.map((s) => s.id).join('|')
-  const prevRouteKey = useRef(routeKey)
-  useEffect(() => {
-    if (prevRouteKey.current !== routeKey) {
-      prevRouteKey.current = routeKey
-      setRouteConfirmed(false)
-    }
-  }, [routeKey])
+  // The route is confirmed when every current stop is in the dispatcher's
+  // confirmed set (shared across devices via useRouteDispatch). Rescuing someone
+  // shrinks the route but keeps it a subset, so it stays confirmed; a new help
+  // request adds an unconfirmed stop, prompting the dispatcher to re-confirm.
+  const routeConfirmed = isRouteConfirmed(route, confirmedIds)
 
   const pending = cases.filter((c) => !confirmed.has(c.id)).length
 
@@ -101,7 +95,7 @@ export default function Dispatch() {
           route={route}
           rescued={rescued}
           confirmed={routeConfirmed}
-          onConfirm={() => setRouteConfirmed(true)}
+          onConfirm={() => confirmRoute(route.map((s) => s.id))}
           onRescued={markRescued}
         />
       )}
@@ -192,36 +186,6 @@ function RescueRoutePanel({ route, rescued, confirmed, onConfirm, onRescued }) {
         </ol>
       </div>
     </section>
-  )
-}
-
-function CaseTags({ tags }) {
-  const { needs, vulnerabilities } = splitTags(tags)
-
-  if (needs.length === 0 && vulnerabilities.length === 0) {
-    return (
-      <div className="case-tags">
-        <span className="case-tag case-tag--none">No details given</span>
-      </div>
-    )
-  }
-
-  return (
-    <div className="case-tags">
-      {needs.map((tag) => (
-        <span
-          key={tag}
-          className={`case-tag ${tagWeight(tag) >= 70 ? 'case-tag--critical' : ''}`}
-        >
-          {tag}
-        </span>
-      ))}
-      {vulnerabilities.map((tag) => (
-        <span key={tag} className="case-tag case-tag--vuln">
-          {tag}
-        </span>
-      ))}
-    </div>
   )
 }
 

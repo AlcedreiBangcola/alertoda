@@ -6,6 +6,7 @@ const ITEMS = [
   { key: 'map', label: 'Map', icon: MapIcon },
   { key: 'community', label: 'Community', icon: CommunityIcon },
   { key: 'dispatch', label: 'Dispatch', icon: DispatchIcon },
+  { key: 'rescuer', label: 'Rescuer', icon: RescuerIcon },
 ]
 
 export default function BottomNav({ active, onChange }) {
@@ -78,6 +79,19 @@ function DispatchIcon() {
       <rect x="5" y="3" width="14" height="18" rx="2" />
       <path d="M9 3.5h6V6H9z" />
       <path d="m8.5 12 2 2 4-4" />
+    </svg>
+  )
+}
+
+// Field responder: a navigation pin tracing a route — boots on the ground.
+function RescuerIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 20c2-3 4-3 4-5a2 2 0 0 0-4 0c0 2 2 2 4 5Z" />
+      <circle cx="7" cy="9" r="0.6" fill="currentColor" stroke="none" />
+      <path d="M12 18h4a2.5 2.5 0 0 0 0-5h-3a2.5 2.5 0 0 1 0-5h3" />
+      <path d="m16 6 2 2-2 2" />
     </svg>
   )
 }

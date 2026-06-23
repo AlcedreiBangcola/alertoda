@@ -1,0 +1,293 @@
+/* Rescuer (field responder) view. Reuses the global case-tag / prio-pill /
+   route-map / rescued-btn styling so it reads as one calm, navy-themed app. */
+
+/* ---- Waiting-for-dispatch (no confirmed route yet) ---- */
+.rescuer-waiting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 40px 24px;
+}
+
+.rescuer-waiting strong {
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+
+.rescuer-waiting p {
+  margin: 0;
+  max-width: 32ch;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.rescuer-waiting-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  border: 1px solid var(--brand-border);
+  margin-bottom: 4px;
+}
+
+.rescuer-waiting-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--brand);
+  box-shadow: 0 0 0 0 var(--brand-pulse);
+  animation: rescuer-pulse 1.8s ease-out infinite;
+}
+
+@keyframes rescuer-pulse {
+  0% { box-shadow: 0 0 0 0 var(--brand-pulse); }
+  70% { box-shadow: 0 0 0 14px rgba(30, 58, 95, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(30, 58, 95, 0); }
+}
+
+/* ---- Progress ("2 of 6 rescued") ---- */
+.rescuer-progress {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-left: 4px solid var(--brand);
+}
+
+.rescuer-progress--done {
+  border-left-color: var(--safe);
+  background: var(--safe-soft);
+}
+
+.rescuer-progress-top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.rescuer-progress-count {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.rescuer-progress--done .rescuer-progress-count {
+  color: var(--safe-ink);
+}
+
+.rescuer-progress-of {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.rescuer-progress-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+
+.rescuer-progress-track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.rescuer-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--safe);
+  transition: width 0.4s ease;
+}
+
+/* ---- Route panel ---- */
+.rescuer-route {
+  background: var(--surface);
+  border: 1px solid #bfe4d1;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  border-left: 4px solid var(--safe);
+}
+
+.rescuer-route-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.rescuer-route-head h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+  color: var(--safe-ink);
+}
+
+.rescuer-route-badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--safe-ink);
+  background: var(--safe-soft);
+  border: 1px solid var(--safe-border);
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+
+.rescuer-route .route-map-canvas {
+  margin-bottom: 14px;
+}
+
+/* ---- Ordered stop list ---- */
+.rescuer-stops {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rescuer-stop {
+  display: flex;
+  gap: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+/* The current (next) stop is lifted out: this is where the responder goes now. */
+.rescuer-stop--current {
+  background: var(--surface);
+  border-color: var(--brand-border);
+  box-shadow: var(--shadow);
+}
+
+.rescuer-stop-num {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--safe);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.rescuer-stop--current .rescuer-stop-num {
+  background: var(--brand);
+}
+
+.rescuer-stop-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.rescuer-stop-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.rescuer-stop-name {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.rescuer-stop-cue {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--brand);
+}
+
+.rescuer-stop-reason {
+  display: block;
+  margin: 4px 0 2px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.rescuer-stop .case-tags {
+  margin: 8px 0;
+}
+
+.rescuer-stop-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.rescuer-stop-leg {
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+}
+
+/* ---- All-done state ---- */
+.rescuer-complete {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 28px 20px;
+  color: var(--safe-ink);
+}
+
+.rescuer-complete-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--safe-soft);
+  border: 1px solid var(--safe-border);
+  color: var(--safe);
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.rescuer-complete span {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
