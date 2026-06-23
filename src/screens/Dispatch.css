@@ -178,6 +178,13 @@
   font-weight: 500;
 }
 
+/* Vulnerability chips carry the indigo "who is at risk" voice. */
+.case-tag--vuln {
+  color: #43489c;
+  background: #eef0fb;
+  border-color: #c5c9ee;
+}
+
 /* ---- AI suggestion + confirm row ---- */
 .case-decision {
   display: flex;
@@ -207,6 +214,14 @@
   color: var(--ai);
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+/* Plain-language explanation of why this rank, e.g. "High priority: Injured + Elderly". */
+.ai-reason {
+  width: 100%;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-soft);
 }
 
 .prio-pill {
@@ -403,27 +418,16 @@
   letter-spacing: -0.01em;
 }
 
-.route-stop-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin: 7px 0 6px;
-}
-
-.route-stop-tag {
-  font-size: 0.72rem;
+.route-stop-reason {
+  display: block;
+  margin: 4px 0 2px;
+  font-size: 0.76rem;
   font-weight: 600;
-  color: var(--ink);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 3px 8px;
-  border-radius: 999px;
+  color: var(--ai);
 }
 
-.route-stop-tag--none {
-  color: var(--ink-soft);
-  font-style: italic;
-  font-weight: 500;
+.route-stop .case-tags {
+  margin: 6px 0;
 }
 
 .route-stop-leg {

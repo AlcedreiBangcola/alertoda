@@ -97,6 +97,25 @@
   color: #a8442f;
 }
 
+/* ---- Vulnerability quick-select (optional) ---- */
+.vuln-heading {
+  margin: 26px 2px 2px;
+  font-size: 1.05rem;
+}
+
+.vuln-sub {
+  margin: 0 2px 8px;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+/* Distinct indigo "who is at risk" voice, set apart from the help-red needs. */
+.tag--vuln.is-active {
+  background: #eef0fb;
+  border-color: #5b61c4;
+  color: #43489c;
+}
+
 /* ---- Action buttons ---- */
 .report-actions {
   display: flex;

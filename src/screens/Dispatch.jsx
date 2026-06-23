@@ -1,33 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useReports } from '../hooks/useReports.js'
 import { buildRescueRoute } from '../lib/rescueRoute.js'
+import { suggestPriority, splitTags, tagWeight } from '../lib/priority.js'
 import { DISPATCH_ORIGIN } from '../data/mockReports.js'
 import RescueRouteMap from '../components/RescueRouteMap.jsx'
 import './Dispatch.css'
-
-// AI priority model: each need carries a weight; the case score is their sum.
-// Trapped and Injured dominate so life-threatening cases always float to the top.
-const TAG_WEIGHTS = {
-  Trapped: 100,
-  Injured: 70,
-  'Structural Damage': 35,
-  'Need Water': 18,
-  'Need Food': 15,
-}
-
-// Score buckets → the label the AI suggests to the dispatcher.
-const LEVELS = [
-  { key: 'critical', label: 'Critical', min: 70 },
-  { key: 'high', label: 'High', min: 35 },
-  { key: 'moderate', label: 'Moderate', min: 15 },
-  { key: 'low', label: 'Low', min: 0 },
-]
-
-function suggestPriority(tags) {
-  const score = tags.reduce((sum, tag) => sum + (TAG_WEIGHTS[tag] || 0), 0)
-  const level = LEVELS.find((l) => score >= l.min)
-  return { score, level: level.key, label: level.label }
-}
 
 function timeAgo(at) {
   if (!at) return null
@@ -180,17 +157,8 @@ function RescueRoutePanel({ route, confirmed, onConfirm }) {
                     {stop.ai.label}
                   </span>
                 </div>
-                <div className="route-stop-tags">
-                  {stop.tags.length > 0 ? (
-                    stop.tags.map((tag) => (
-                      <span key={tag} className="route-stop-tag">{tag}</span>
-                    ))
-                  ) : (
-                    <span className="route-stop-tag route-stop-tag--none">
-                      No details given
-                    </span>
-                  )}
-                </div>
+                <span className="route-stop-reason">{stop.ai.reason}</span>
+                <CaseTags tags={stop.tags} />
                 <span className="route-stop-leg">
                   {stop.distanceKm.toFixed(1)} km from previous
                 </span>
@@ -200,6 +168,36 @@ function RescueRoutePanel({ route, confirmed, onConfirm }) {
         </ol>
       </div>
     </section>
+  )
+}
+
+function CaseTags({ tags }) {
+  const { needs, vulnerabilities } = splitTags(tags)
+
+  if (needs.length === 0 && vulnerabilities.length === 0) {
+    return (
+      <div className="case-tags">
+        <span className="case-tag case-tag--none">No details given</span>
+      </div>
+    )
+  }
+
+  return (
+    <div className="case-tags">
+      {needs.map((tag) => (
+        <span
+          key={tag}
+          className={`case-tag ${tagWeight(tag) >= 70 ? 'case-tag--critical' : ''}`}
+        >
+          {tag}
+        </span>
+      ))}
+      {vulnerabilities.map((tag) => (
+        <span key={tag} className="case-tag case-tag--vuln">
+          {tag}
+        </span>
+      ))}
+    </div>
   )
 }
 
@@ -226,28 +224,14 @@ function CaseCard({ report, confirmed, onToggleConfirm }) {
           )}
         </div>
 
-        {report.tags.length > 0 ? (
-          <div className="case-tags">
-            {report.tags.map((tag) => (
-              <span
-                key={tag}
-                className={`case-tag ${TAG_WEIGHTS[tag] >= 70 ? 'case-tag--critical' : ''}`}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <div className="case-tags">
-            <span className="case-tag case-tag--none">No details given</span>
-          </div>
-        )}
+        <CaseTags tags={report.tags} />
 
         <div className="case-decision">
           <div className="ai-suggestion">
             <span className="ai-spark" aria-hidden="true">✦</span>
             <span className="ai-label">AI Suggested Priority</span>
             <span className={`prio-pill prio-pill--${ai.level}`}>{ai.label}</span>
+            <span className="ai-reason">{ai.reason}</span>
           </div>
 
           <button

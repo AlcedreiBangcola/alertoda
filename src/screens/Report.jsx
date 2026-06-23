@@ -1,30 +1,17 @@
 import { useState } from 'react'
 import { QC_CENTER } from '../data/mockReports.js'
+import { HELP_TAGS, VULNERABILITY_TAGS, suggestPriority } from '../lib/priority.js'
 import { supabase } from '../lib/supabaseClient.js'
 import './Report.css'
-
-const HELP_TAGS = ['Trapped', 'Injured', 'Need Water', 'Need Food', 'Structural Damage']
 
 // Placeholder identity until we add real accounts/auth.
 const PLACEHOLDER_NAME = 'Anonymous Resident'
 
-// How urgent each need is; the report's urgency is the highest level among its tags.
-const TAG_WEIGHTS = {
-  Trapped: 100,
-  Injured: 70,
-  'Structural Damage': 35,
-  'Need Water': 18,
-  'Need Food': 15,
-}
-
-// Derive an urgency label the dispatcher view can rely on. Safe reports aren't urgent.
+// Derive an urgency label the dispatcher view can rely on. Safe reports aren't
+// urgent; help reports score by both need and vulnerability tags (see priority.js).
 function urgencyFor(status, tags) {
   if (status !== 'help') return 'none'
-  const score = tags.reduce((sum, tag) => sum + (TAG_WEIGHTS[tag] || 0), 0)
-  if (score >= 70) return 'critical'
-  if (score >= 35) return 'high'
-  if (score >= 15) return 'moderate'
-  return 'low'
+  return suggestPriority(tags).level
 }
 
 // If geolocation isn't available, drop the report near QC center with a small
@@ -68,10 +55,17 @@ export default function Report({ onSubmit }) {
   // 'choose' → pick safe/help · 'help-detail' → select tags · 'confirmed' → result
   const [step, setStep] = useState('choose')
   const [selectedTags, setSelectedTags] = useState([])
+  const [selectedVuln, setSelectedVuln] = useState([])
   const [report, setReport] = useState(null)
 
   function toggleTag(tag) {
     setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    )
+  }
+
+  function toggleVuln(tag) {
+    setSelectedVuln((prev) =>
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     )
   }
@@ -98,11 +92,13 @@ export default function Report({ onSubmit }) {
   }
 
   function submitHelp() {
-    commit('help', selectedTags)
+    // Need tags and vulnerability tags are stored together in the report.
+    commit('help', [...selectedTags, ...selectedVuln])
   }
 
   function reset() {
     setSelectedTags([])
+    setSelectedVuln([])
     setReport(null)
     setStep('choose')
   }
@@ -127,6 +123,24 @@ export default function Report({ onSubmit }) {
                 key={tag}
                 className={`tag ${isActive ? 'is-active' : ''}`}
                 onClick={() => toggleTag(tag)}
+                aria-pressed={isActive}
+              >
+                {tag}
+              </button>
+            )
+          })}
+        </div>
+
+        <h2 className="vuln-heading">Anyone vulnerable?</h2>
+        <p className="vuln-sub">Optional. Helps responders prioritize who to reach first.</p>
+        <div className="tag-grid">
+          {VULNERABILITY_TAGS.map((tag) => {
+            const isActive = selectedVuln.includes(tag)
+            return (
+              <button
+                key={tag}
+                className={`tag tag--vuln ${isActive ? 'is-active' : ''}`}
+                onClick={() => toggleVuln(tag)}
                 aria-pressed={isActive}
               >
                 {tag}
