@@ -1,5 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useReports } from '../hooks/useReports.js'
+import { buildRescueRoute } from '../lib/rescueRoute.js'
+import { DISPATCH_ORIGIN } from '../data/mockReports.js'
+import RescueRouteMap from '../components/RescueRouteMap.jsx'
 import './Dispatch.css'
 
 // AI priority model: each need carries a weight; the case score is their sum.
@@ -41,6 +44,9 @@ export default function Dispatch() {
   // Which case IDs a human dispatcher has acknowledged. AI only suggests; this is the confirm.
   const [confirmed, setConfirmed] = useState(() => new Set())
 
+  // The rescue route is also AI-suggested until a human taps "Confirm Route".
+  const [routeConfirmed, setRouteConfirmed] = useState(false)
+
   function toggleConfirm(id) {
     setConfirmed((prev) => {
       const next = new Set(prev)
@@ -57,6 +63,20 @@ export default function Dispatch() {
       .map((r) => ({ ...r, ai: suggestPriority(r.tags) }))
       .sort((a, b) => b.ai.score - a.ai.score || new Date(b.at || 0) - new Date(a.at || 0))
   }, [reports])
+
+  // AI rescue route: nearest-neighbor from the dispatch origin, weighted by urgency.
+  const route = useMemo(() => buildRescueRoute(cases, DISPATCH_ORIGIN), [cases])
+
+  // If the route changes (a new help report arrives), it's a fresh suggestion —
+  // drop the prior confirmation so the dispatcher re-approves the updated plan.
+  const routeKey = route.map((s) => s.id).join('|')
+  const prevRouteKey = useRef(routeKey)
+  useEffect(() => {
+    if (prevRouteKey.current !== routeKey) {
+      prevRouteKey.current = routeKey
+      setRouteConfirmed(false)
+    }
+  }, [routeKey])
 
   const pending = cases.filter((c) => !confirmed.has(c.id)).length
 
@@ -87,6 +107,14 @@ export default function Dispatch() {
         AI suggests a priority. A dispatcher confirms each case.
       </p>
 
+      {route.length > 0 && (
+        <RescueRoutePanel
+          route={route}
+          confirmed={routeConfirmed}
+          onConfirm={() => setRouteConfirmed(true)}
+        />
+      )}
+
       {loading ? null : cases.length === 0 ? (
         <div className="dispatch-empty">No reports yet. No active help requests.</div>
       ) : (
@@ -102,6 +130,76 @@ export default function Dispatch() {
         </ul>
       )}
     </div>
+  )
+}
+
+function RescueRoutePanel({ route, confirmed, onConfirm }) {
+  return (
+    <section className={`route-panel ${confirmed ? 'route-panel--confirmed' : ''}`}>
+      <div className="route-panel-head">
+        <div className="route-title">
+          <span className="ai-spark" aria-hidden="true">✦</span>
+          <h2>{confirmed ? 'Route Confirmed' : 'AI Suggested Route'}</h2>
+        </div>
+        {confirmed ? (
+          <span className="route-confirmed-badge">
+            <span aria-hidden="true">✓</span> Approved
+          </span>
+        ) : (
+          <button className="route-confirm-btn" onClick={onConfirm}>
+            Confirm Route
+          </button>
+        )}
+      </div>
+
+      <p className="route-subnote">
+        {confirmed
+          ? `Dispatcher approved · ${route.length} stop${route.length > 1 ? 's' : ''} from base.`
+          : 'Efficient order weighing urgency and travel. Review, then confirm to dispatch.'}
+      </p>
+
+      <div className="route-layout">
+        <RescueRouteMap
+          origin={DISPATCH_ORIGIN}
+          stops={route}
+          confirmed={confirmed}
+        />
+
+        <ol className="route-stops">
+          {route.map((stop, i) => (
+            <li key={stop.id} className="route-stop">
+              <span
+                className={`route-stop-num ${confirmed ? 'route-stop-num--confirmed' : ''}`}
+              >
+                {i + 1}
+              </span>
+              <div className="route-stop-body">
+                <div className="route-stop-top">
+                  <span className="route-stop-name">{stop.name}</span>
+                  <span className={`prio-pill prio-pill--${stop.ai.level}`}>
+                    {stop.ai.label}
+                  </span>
+                </div>
+                <div className="route-stop-tags">
+                  {stop.tags.length > 0 ? (
+                    stop.tags.map((tag) => (
+                      <span key={tag} className="route-stop-tag">{tag}</span>
+                    ))
+                  ) : (
+                    <span className="route-stop-tag route-stop-tag--none">
+                      No details given
+                    </span>
+                  )}
+                </div>
+                <span className="route-stop-leg">
+                  {stop.distanceKm.toFixed(1)} km from previous
+                </span>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
   )
 }
 
