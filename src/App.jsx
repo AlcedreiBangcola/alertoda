@@ -5,6 +5,7 @@ import MapScreen from './screens/MapScreen.jsx'
 import Community from './screens/Community.jsx'
 import Dispatch from './screens/Dispatch.jsx'
 import BottomNav from './components/BottomNav.jsx'
+import AppBar from './components/AppBar.jsx'
 import EarthquakeAlert from './components/EarthquakeAlert.jsx'
 import { useEarthquakeAlert } from './hooks/useEarthquakeAlert.js'
 import './App.css'
@@ -40,6 +41,7 @@ export default function App() {
   // (see useReports); the Report screen writes new welfare checks back to it.
   return (
     <div className="app-shell">
+      <AppBar />
       <main className="app-content">
         {active === 'home' && <Home onQuake={broadcast} />}
         {active === 'report' && <Report />}

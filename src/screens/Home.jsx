@@ -11,7 +11,7 @@ export default function Home({ onQuake }) {
   return (
     <div>
       <header className="screen-header">
-        <h1>AlerToda</h1>
+        <h1>Stay aware, stay safe</h1>
         <p>Community earthquake awareness · Quezon City</p>
       </header>
 

@@ -10,12 +10,12 @@
 
 .status-card--calm {
   background: var(--safe-soft);
-  border: 1px solid #cfe9dc;
+  border: 1px solid var(--safe-border);
 }
 
 .status-card--listening {
   background: var(--brand-soft);
-  border: 1px solid #cfe3e5;
+  border: 1px solid var(--brand-border);
 }
 
 .status-card--listening h2 {
@@ -25,7 +25,8 @@
 .status-card h2 {
   margin: 0 0 2px;
   font-size: 1.25rem;
-  color: #1f6b48;
+  font-weight: 700;
+  color: var(--safe-ink);
 }
 
 .status-card p {
@@ -45,14 +46,14 @@
 
 .status-dot--listening {
   background: var(--brand);
-  box-shadow: 0 0 0 0 rgba(31, 111, 120, 0.4);
+  box-shadow: 0 0 0 0 var(--brand-pulse);
   animation: status-pulse 1.8s ease-out infinite;
 }
 
 @keyframes status-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(31, 111, 120, 0.4); }
-  70% { box-shadow: 0 0 0 12px rgba(31, 111, 120, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(31, 111, 120, 0); }
+  0% { box-shadow: 0 0 0 0 var(--brand-pulse); }
+  70% { box-shadow: 0 0 0 12px rgba(30, 58, 95, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(30, 58, 95, 0); }
 }
 
 .info-row {

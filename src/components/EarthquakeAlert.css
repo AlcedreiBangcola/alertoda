@@ -1,13 +1,27 @@
 /* ---- Earthquake alert state ----
-   Prominent and clear, but warm rather than an aggressive all-red screen. */
+   Prominent and clear, but warm rather than an aggressive all-red screen.
+   Calm urgency: a steady navy field with a single warm focal point. */
 .quake-alert {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 56px 24px;
-  min-height: 70vh;
+  padding: 56px 28px;
+  min-height: 100dvh;
   justify-content: center;
+  background:
+    radial-gradient(120% 80% at 50% 18%, #243f63 0%, var(--brand-strong) 60%, #0f2540 100%);
+  color: #fff;
+}
+
+.quake-brand {
+  position: absolute;
+  top: calc(22px + env(safe-area-inset-top));
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .quake-ring {
@@ -39,26 +53,28 @@
 
 .quake-title {
   margin: 0 0 10px;
-  font-size: 1.8rem;
-  color: #a8442f;
-  letter-spacing: -0.01em;
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
 }
 
 .quake-sub {
-  margin: 0 0 28px;
-  max-width: 280px;
-  color: var(--ink-soft);
-  font-size: 0.98rem;
-  line-height: 1.5;
+  margin: 0 0 30px;
+  max-width: 300px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 1rem;
+  line-height: 1.55;
 }
 
 .quake-btn {
-  padding: 16px 28px;
+  padding: 17px 30px;
   border-radius: 16px;
-  background: var(--help);
-  color: #fff;
+  background: #fff;
+  color: var(--brand-strong);
   font-size: 1.05rem;
   font-weight: 700;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
   transition: transform 0.12s ease, filter 0.12s ease;
 }
 

@@ -6,10 +6,11 @@ import './EarthquakeAlert.css'
 export default function EarthquakeAlert({ onCheckIn }) {
   return (
     <div className="quake-alert">
+      <span className="quake-brand">AlerToda</span>
       <div className="quake-ring" aria-hidden="true">
         <span className="quake-glyph">!</span>
       </div>
-      <h1 className="quake-title">Earthquake Detected!</h1>
+      <h1 className="quake-title">Earthquake Detected</h1>
       <p className="quake-sub">Strong shaking detected. Taking you to a quick safety check…</p>
       <button className="quake-btn" onClick={onCheckIn}>
         Check in now

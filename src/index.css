@@ -1,23 +1,43 @@
 :root {
-  /* Calm, trustworthy palette */
-  --bg: #f4f7f8;
+  /* Calm, trustworthy palette — deep navy primary, soft neutrals,
+     green reserved for "safe", a muted red-orange only for "needs help". */
+  --bg: #f3f6fa;          /* soft, cool off-white */
   --surface: #ffffff;
-  --ink: #1c2b2d;
-  --ink-soft: #5d7173;
-  --border: #e2eaeb;
+  --ink: #142031;         /* deep slate ink */
+  --ink-soft: #5c6b80;    /* muted slate gray */
+  --border: #e4e9f0;
 
-  --brand: #1f6f78;       /* deep teal */
-  --brand-soft: #e6f1f2;
+  --brand: #1e3a5f;       /* deep navy / slate blue */
+  --brand-strong: #16304f;
+  --brand-soft: #eaf0f7;  /* soft navy tint */
+  --brand-border: #cdd9e8;
+  --brand-pulse: rgba(30, 58, 95, 0.4);
+
   --safe: #2e9e6b;        /* calm green */
   --safe-soft: #e7f5ee;
-  --help: #d9694f;        /* warm, not aggressive, red-orange */
+  --safe-border: #bfe4d1;
+  --safe-ink: #1f6b48;
+
+  --help: #d9694f;        /* warm, muted red-orange — never harsh */
   --help-soft: #fbeae5;
+  --help-border: #f1c9bd;
+  --help-ink: #a8442f;
 
-  --shadow: 0 2px 12px rgba(28, 43, 45, 0.06);
-  --radius: 18px;
+  /* AI accent — a calm indigo, distinct from the navy brand. */
+  --ai: #5b61c4;
+  --ai-soft: #eef0fb;
+  --ai-border: #c5c9ee;
 
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --shadow: 0 2px 14px rgba(20, 32, 49, 0.07);
+  --shadow-lg: 0 10px 30px rgba(20, 32, 49, 0.10);
+  --radius: 20px;
+  --radius-sm: 14px;
+
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 * {
@@ -32,6 +52,7 @@ html, body, #root {
 
 body {
   background: var(--bg);
+  line-height: 1.5;
 }
 
 button {

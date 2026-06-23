@@ -1,20 +1,24 @@
 .welfare-buttons {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-top: 8px;
+  gap: 18px;
+  margin-top: 12px;
 }
 
 .welfare-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 34px 20px;
-  border-radius: 22px;
+  gap: 8px;
+  padding: 38px 20px;
+  border-radius: 24px;
   text-align: center;
   box-shadow: var(--shadow);
-  transition: transform 0.12s ease, filter 0.12s ease;
+  transition: transform 0.12s ease, filter 0.12s ease, box-shadow 0.12s ease;
+}
+
+.welfare-btn:hover {
+  box-shadow: var(--shadow-lg);
 }
 
 .welfare-btn:active {
@@ -45,8 +49,8 @@
 
 .welfare-btn--safe {
   background: var(--safe-soft);
-  border: 1.5px solid #bfe4d1;
-  color: #1f6b48;
+  border: 1.5px solid var(--safe-border);
+  color: var(--safe-ink);
 }
 
 .welfare-btn--safe .welfare-icon {
@@ -56,8 +60,8 @@
 
 .welfare-btn--help {
   background: var(--help-soft);
-  border: 1.5px solid #f1c9bd;
-  color: #a8442f;
+  border: 1.5px solid var(--help-border);
+  color: var(--help-ink);
 }
 
 .welfare-btn--help .welfare-icon {
@@ -176,12 +180,12 @@
 
 .confirm-card--safe {
   background: var(--safe-soft);
-  border: 1px solid #cfe9dc;
+  border: 1px solid var(--safe-border);
 }
 
 .confirm-card--help {
   background: var(--brand-soft);
-  border: 1px solid #cfe3e5;
+  border: 1px solid var(--brand-border);
 }
 
 .confirm-icon {
